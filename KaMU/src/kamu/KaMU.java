@@ -11,14 +11,9 @@ public class KaMU {
         
         while (true){
             if (conn) {
-                //Led.ledtoggle(0);
+                //Led.ledtoggle(0);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
                 controller.start();
-                
-                //if (KaaController.profile !=0 ){
-                 //   KaaController.sender.start();
-                //}
-            }
-           
+            }           
             try{
                 conn = InetAddress.getByName("192.168.142.46").isReachable(1000);
             } catch (Exception e){
@@ -27,15 +22,9 @@ public class KaMU {
                     controller.stop();
                 }     
                 conn = false;
-                //Led.ledtoggle(500);
-                LOG.info("Connection to Kaa server failed: " + e.getMessage());
-                    
-            }
-               
-           
-            Thread.sleep(1000);
-        }
-        
-       }
-    
+                //Led.ledtoggle(500);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
+                LOG.info("Connection to Kaa server failed: " + e.getMessage());                    
+            }          
+        }     
+    }   
 }
