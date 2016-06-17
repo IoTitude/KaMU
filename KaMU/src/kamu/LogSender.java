@@ -43,11 +43,11 @@ public class LogSender implements Runnable {
     }
     
     public boolean isAlive() {
-        if (thread != null) {      
-            return true;
+        if (thread == null) {      
+            return false;
         } 
         else {
-            return false;
+            return true;
         }
     }
     
@@ -60,7 +60,7 @@ public class LogSender implements Runnable {
     public static void sendLog() throws InterruptedException{
         KaaController.kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(1));
             
-        while (KaMU.conn){                     
+        while (KaMU.conn && KaaController.profile != 0){                     
             java.util.Date dt = new java.util.Date();
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentTime = sdf.format(dt);

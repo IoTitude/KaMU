@@ -17,7 +17,7 @@ import org.kaaproject.kaa.schema.sample.event.kamu.RegistrationAnswer;
 
 public class KaaController implements Runnable{
     private Thread thread;
-    private String threadName = "";
+    private final String threadName;
     static KaaClient kaaClient;
     static int profile;
     static LogSender sender;
@@ -123,7 +123,7 @@ public class KaaController implements Runnable{
     }
     
     public static String getMac(){
-        String macStr = "";
+        String macStr;
         try {
             NetworkInterface netInf = NetworkInterface.getNetworkInterfaces().nextElement();
             byte[] mac = netInf.getHardwareAddress();
