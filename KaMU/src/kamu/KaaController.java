@@ -1,11 +1,14 @@
 package kamu;
 
 import java.net.NetworkInterface;
+import java.util.LinkedList;
+import java.util.List;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
+import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
@@ -21,6 +24,7 @@ public class KaaController implements Runnable{
     static KaaClient kaaClient;
     static int profile;
     static LogSender sender;
+    static BaasBoxController baas;
     
     KaaController (String name) {
         threadName = name;   
@@ -30,12 +34,18 @@ public class KaaController implements Runnable{
     public void start(){  
         if (thread == null)
         {
+            //System.out.println(getMac());
             kaaStart(); 
             System.out.println("Starting " +  threadName );
             thread = new Thread (this, threadName);
             thread.start();
+            String session = baas.logIn();
+            List<String> hashes = baas.getAdminHashes(session);
             attachUser();
             sender = new LogSender("LogSender");
+            sendRegistrationRequest(hashes);
+            //sendProfileAll();
+            
             //Led led = new Led(); //////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED  
         }
         
@@ -138,4 +148,65 @@ public class KaaController implements Runnable{
             return e.getMessage();
         }
     }
+    
+    public static void sendProfileAll(){
+        //List<String> FQNs = new LinkedList<>();
+        //FQNs.add(ChangeProfile.class.getName());
+        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
+
+        tecf.sendEventToAll(new ChangeProfile(1));
+        System.out.println("Change profile request sent");
+        //LogData log = new LogData("asdmacasd", "asdhashasd");
+                //kaaClient.addLogRecord(log);
+}
+    
+    public static void sendRegistrationRequest(List<String> hashes){
+        
+        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
+        
+        for (String target : hashes) {
+            RegisterDevice ctc = new RegisterDevice(getMac(), kaaClient.getEndpointKeyHash());
+            tecf.sendEvent(ctc, target);
+            System.out.println(target + " target");
+        }
+
+        /*
+        List<String> FQNs = new LinkedList<>();
+        FQNs.add(ChangeProfile.class.getName());         
+        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
+        final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
+        kaaClient.findEventListeners(FQNs, new FindEventListenersCallback() {
+            @Override
+            public void onEventListenersReceived(List<String> eventListeners) {
+                if (kaaClient.isAttachedToUser()) {
+                    System.out.println("kaaClient is attached to user");
+                }
+                else {
+                    System.out.println("kaaClient is NOT attached to user");
+                }
+                
+                RegisterDevice ctc = new RegisterDevice(getMac(), kaaClient.getEndpointKeyHash());
+                for (String target : hashes){
+                
+                tecf.sendEvent(ctc, target);
+                System.out.println("Registration request sent to admin.");
+                }
+                
+                // Assume the target variable is one of the received in the findEventListeners method
+               
+               
+            }   
+        
+            @Override
+            public void onRequestFailed() {
+                System.out.println("Send profile request failed");
+            }
+});
+*/
+            
+    }
+    
+    
 }

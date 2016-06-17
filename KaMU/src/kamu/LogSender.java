@@ -3,7 +3,7 @@ package kamu;
 import java.util.Random;
 import java.util.logging.Level;
 import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
-import org.kaaproject.kaa.schema.sample.logging.LogDataTest;
+import org.kaaproject.kaa.schema.sample.logging.LogData24;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +65,7 @@ public class LogSender implements Runnable {
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentTime = sdf.format(dt);
             Random random = new Random();
-            LogDataTest log = new LogDataTest(KaaController.getMac(), random.nextInt(101), currentTime);
+            LogData24 log = new LogData24(KaaController.getMac(), 0.1, 0.1, 0.1, 0.1, 0.1);
             KaaController.kaaClient.addLogRecord(log);
 
             //Led.ledtoggle(2500);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
