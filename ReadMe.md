@@ -52,5 +52,5 @@ status:
 
 | Feature | Status |
 |:----|:----|
-| Device registration to baasbox | - |
+| Device registration to baasbox | Done |
 

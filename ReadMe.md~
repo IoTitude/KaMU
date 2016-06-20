@@ -5,10 +5,18 @@ KaMU is a an application used by a embedded measuring unit solution to perform v
 ## Tools
 
 Kaa 0.9.0
+
 Oracle JDK 8
+
 MariaDB 5.5
+
 Zookeeper 3.4.5
+
 Cassandra 3.5
+
+Baasbox 0.9.5
+
+OrientDB 1.7.10
 
 ## Versioning
 
@@ -39,3 +47,10 @@ status:
 |:----|:----|
 | Single Target Profiling | - |
 | Read data from simDataGen | Done |
+
+### Release Plan for 0.2.0.24
+
+| Feature | Status |
+|:----|:----|
+| Device registration to baasbox | - |
+
