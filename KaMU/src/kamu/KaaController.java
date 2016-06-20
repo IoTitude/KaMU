@@ -25,6 +25,7 @@ public class KaaController implements Runnable{
     static int profile;
     static LogSender sender;
     static BaasBoxController baas;
+    static boolean isRegistered = false;
     
     KaaController (String name) {
         threadName = name;   
@@ -34,16 +35,16 @@ public class KaaController implements Runnable{
     public void start(){  
         if (thread == null)
         {
-            //System.out.println(getMac());
             kaaStart(); 
+            System.out.println(getMac());
             System.out.println("Starting " +  threadName );
             thread = new Thread (this, threadName);
             thread.start();
-            String session = baas.logIn();
-            List<String> hashes = baas.getAdminHashes(session);
+            
+            
             attachUser();
             sender = new LogSender("LogSender");
-            sendRegistrationRequest(hashes);
+            
             //sendProfileAll();
             
             //Led led = new Led(); //////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED  
@@ -53,10 +54,22 @@ public class KaaController implements Runnable{
     
     @Override
     public void run() {
-        Thread thisThread = Thread.currentThread();
-        while (thread == thisThread){
-                
-        }       
+        while (!isRegistered) {
+            String session = baas.logIn();
+            List<String> hashes = baas.getAdminHashes(session);
+            sendRegistrationRequest(hashes);
+        }
+        //Thread thisThread = Thread.currentThread();
+        //while (thread == thisThread){
+            //if (!isRegistered) {
+                String session = baas.logIn();
+                List<String> hashes = baas.getAdminHashes(session);
+                sendRegistrationRequest(hashes);
+            //}
+            //else {
+                System.out.println("asd");
+            //}
+        //}       
     }
     
     public boolean isAlive() {
@@ -128,6 +141,7 @@ public class KaaController implements Runnable{
             @Override
             public void onEvent(RegistrationAnswer event, String source) {
                 System.out.println(event.getIsRegistered());
+                isRegistered = true;
             }
         });
     }
@@ -169,7 +183,7 @@ public class KaaController implements Runnable{
         for (String target : hashes) {
             RegisterDevice ctc = new RegisterDevice(getMac(), kaaClient.getEndpointKeyHash());
             tecf.sendEvent(ctc, target);
-            System.out.println(target + " target");
+            System.out.println("Registration request sent to admin");
         }
 
         /*
