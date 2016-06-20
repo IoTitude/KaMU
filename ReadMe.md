@@ -27,30 +27,44 @@ major.minor.status.week
 0.1.0.24
 
 status:
-0 alpha
-1 beta
-2 release candidate
-3 release
+0 alpha  
+1 beta  
+2 release candidate  
+3 release  
 
 ## Release Plan
 
-### Release Plan for 0.0.0.24
+### Release Plan for 0.1
 
 | Feature | Status |
 |:----|:----|
-| Profiling | Done |
+| Send random log data to Cassandra | Done |
+
+### Release Plan for 0.2
+
+| Feature | Status |
+|:----|:----|
+| Profiling logic | Done |
+| Add MAC address to log data | Done |
+| Read log data from SimDataGen | Done |
+
+### Release Plan for 0.3
+
+| Feature | Status |
+|:----|:----|
 | Threading | Done |
+| Communicating with BaasBox | Done |
 
-### Release Plan for 0.1.0.24
-
-| Feature | Status |
-|:----|:----|
-| Single Target Profiling | - |
-| Read data from simDataGen | Done |
-
-### Release Plan for 0.2.0.24
+### Release Plan for 0.4
 
 | Feature | Status |
 |:----|:----|
-| Device registration to baasbox | Done |
+| - | - |
 
+### Other features, tbd
+
+* Ability to measure using different sensors
+* Updating on the fly
+* Ability to restart KaMU at any point
+* Tracking KaMU condition
+ * Eg. battery level
