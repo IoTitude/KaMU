@@ -5,28 +5,46 @@ import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;  
 import com.datastax.driver.core.exceptions.NoHostAvailableException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
  
 public class CassandraConnector {
+
+    public CassandraConnector() {
+    }
     
-    public static double getData(){
-        double data = 0;   
+    public static Map<String, Double> getData(List<String> parameters, int deviceID){
+        //List<Double> data = new ArrayList<>();   
+        Map<String, Double> data = new HashMap<>();   
+        data.put("ominaissahkojohtavuus", 0.0);
+        data.put("virtausnopeus", 0.0);
+        data.put("vedenpinta", 0.0);
+        data.put("paine", 0.0);
+        data.put("lampotila", 0.0);
+        StringBuilder builder = new StringBuilder();
         Cluster cluster;
-        Session session;      
+        Session session;   
         
         try {
             cluster = Cluster.builder().addContactPoint("198.211.127.190").withCredentials("admin", "challenge2016").build();
             session = cluster.connect("mittadata");
-            
-            ResultSet results = session.execute("SELECT vedenpinta FROM simdatagen");
-            for (Row row : results) {                
-                data = row.getDouble("vedenpinta");
-                cluster.close();                
+
+            ResultSet results = session.execute("SELECT * FROM simdatagen WHERE id = " + deviceID + " ALLOW FILTERING;");
+            for (Row row : results) {  
+                for (String parameter : parameters) {
+                    if (data.containsKey(parameter)) {
+                        data.put(parameter, row.getDouble(parameter));
+                    }
+                }
             }
-            return data;
+
         }
         catch (NoHostAvailableException e){
             System.out.println(e.getErrors());
-            return 0;
-        }        
+        }    
+        
+        return data;
     }  
 }

@@ -1,31 +1,38 @@
 package kamu;
 
 import java.net.NetworkInterface;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kaaproject.kaa.client.DesktopKaaPlatformContext;
 import org.kaaproject.kaa.client.Kaa;
 import org.kaaproject.kaa.client.KaaClient;
 import org.kaaproject.kaa.client.SimpleKaaClientStateListener;
 import org.kaaproject.kaa.client.event.EventFamilyFactory;
-import org.kaaproject.kaa.client.event.FindEventListenersCallback;
 import org.kaaproject.kaa.client.event.registration.UserAttachCallback;
 import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
 import org.kaaproject.kaa.common.endpoint.gen.SyncResponseResultType;
 import org.kaaproject.kaa.common.endpoint.gen.UserAttachResponse;
 import org.kaaproject.kaa.schema.sample.event.kamu.ChangeProfile;
 import org.kaaproject.kaa.schema.sample.event.kamu.KaMUEventClassFamily;
-import org.kaaproject.kaa.schema.sample.event.kamu.RegisterDevice;
 import org.kaaproject.kaa.schema.sample.event.kamu.RegistrationAnswer;
+import org.kaaproject.kaa.schema.sample.event.kamu.RegistrationRequest;
+import org.kaaproject.kaa.schema.sample.event.kamu.RestartDevice;
+import org.kaaproject.kaa.schema.sample.event.kamu.UpdateDevice;
 
 public class KaaController implements Runnable{
-    private Thread thread;
-    private final String threadName;
+    private static Thread thread;
+    private static String threadName;
     static KaaClient kaaClient;
     static int profile;
     static LogSender sender;
     static BaasBoxController baas;
     static boolean isRegistered = false;
+    static String version = "0.4";
+    static String[] args;
+    static String session = baas.logIn();
+    static List<String> hashes = baas.getAdminHashes(session);
+    static int deviceID;
     
     KaaController (String name) {
         threadName = name;   
@@ -35,17 +42,15 @@ public class KaaController implements Runnable{
     public void start(){  
         if (thread == null)
         {
+            System.out.println("Version 0.4");
             kaaStart(); 
             System.out.println(getMac());
+            System.out.println(kaaClient.getEndpointKeyHash());
             System.out.println("Starting " +  threadName );
             thread = new Thread (this, threadName);
             thread.start();
-            
-            
             attachUser();
-            sender = new LogSender("LogSender");
             
-            //sendProfileAll();
             
             //Led led = new Led(); //////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED  
         }
@@ -54,22 +59,17 @@ public class KaaController implements Runnable{
     
     @Override
     public void run() {
-        while (!isRegistered) {
-            String session = baas.logIn();
-            List<String> hashes = baas.getAdminHashes(session);
-            sendRegistrationRequest(hashes);
-        }
-        //Thread thisThread = Thread.currentThread();
-        //while (thread == thisThread){
-            //if (!isRegistered) {
-                String session = baas.logIn();
-                List<String> hashes = baas.getAdminHashes(session);
-                sendRegistrationRequest(hashes);
-            //}
-            //else {
-                System.out.println("asd");
-            //}
-        //}       
+        Thread thisThread = Thread.currentThread();
+        while (thread == thisThread){
+            if (!isRegistered) {
+                try {
+                    sendRegistrationRequest(hashes);
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }       
     }
     
     public boolean isAlive() {
@@ -81,7 +81,7 @@ public class KaaController implements Runnable{
         }
     }
      
-    public void stop(){
+    public static void stop(){
         System.out.println("Stopping " +  threadName );
         thread = null;
     }
@@ -134,14 +134,40 @@ public class KaaController implements Runnable{
             }   
 
             @Override
-            public void onEvent(RegisterDevice event, String source) {
-                throw new UnsupportedOperationException("Not supported yet.");
+            public void onEvent(RegistrationAnswer event, String source) {
+                if (!event.getIsRegistered()) {
+                    try {
+                        System.out.println("Error registering device. Retrying...");
+                        isRegistered = event.getIsRegistered();
+                        Thread.sleep(10000);
+                        sendRegistrationRequest(hashes); 
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+                else if (event.getIsRegistered()) {
+                    System.out.println("Device registered successfully");
+                    sender = new LogSender("LogSender");
+                    isRegistered = event.getIsRegistered();
+                    deviceID = event.getDeviceID();
+                    System.out.println("Device ID: " + deviceID);
+                }
             }
 
             @Override
-            public void onEvent(RegistrationAnswer event, String source) {
-                System.out.println(event.getIsRegistered());
-                isRegistered = true;
+            public void onEvent(RegistrationRequest event, String source) {
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            }
+
+            @Override
+            public void onEvent(UpdateDevice event, String source) {
+                System.out.println(event.getVersion());
+            }
+
+            @Override
+            public void onEvent(RestartDevice event, String source) {
+                int delay = event.getDelay();
+                System.out.println(delay);
             }
         });
     }
@@ -163,64 +189,38 @@ public class KaaController implements Runnable{
         }
     }
     
-    public static void sendProfileAll(){
-        //List<String> FQNs = new LinkedList<>();
-        //FQNs.add(ChangeProfile.class.getName());
-        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-        final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
-
-        tecf.sendEventToAll(new ChangeProfile(1));
-        System.out.println("Change profile request sent");
-        //LogData log = new LogData("asdmacasd", "asdhashasd");
-                //kaaClient.addLogRecord(log);
-}
-    
     public static void sendRegistrationRequest(List<String> hashes){
-        
         final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
         final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
-        
         for (String target : hashes) {
-            RegisterDevice ctc = new RegisterDevice(getMac(), kaaClient.getEndpointKeyHash());
+            RegistrationRequest ctc = new RegistrationRequest(getMac(), kaaClient.getEndpointKeyHash(), version);
             tecf.sendEvent(ctc, target);
-            System.out.println("Registration request sent to admin");
-        }
-
-        /*
-        List<String> FQNs = new LinkedList<>();
-        FQNs.add(ChangeProfile.class.getName());         
-        final EventFamilyFactory eventFamilyFactory = kaaClient.getEventFamilyFactory();
-        final KaMUEventClassFamily tecf = eventFamilyFactory.getKaMUEventClassFamily();
-        kaaClient.findEventListeners(FQNs, new FindEventListenersCallback() {
-            @Override
-            public void onEventListenersReceived(List<String> eventListeners) {
-                if (kaaClient.isAttachedToUser()) {
-                    System.out.println("kaaClient is attached to user");
-                }
-                else {
-                    System.out.println("kaaClient is NOT attached to user");
-                }
-                
-                RegisterDevice ctc = new RegisterDevice(getMac(), kaaClient.getEndpointKeyHash());
-                for (String target : hashes){
-                
-                tecf.sendEvent(ctc, target);
-                System.out.println("Registration request sent to admin.");
-                }
-                
-                // Assume the target variable is one of the received in the findEventListeners method
-               
-               
-            }   
-        
-            @Override
-            public void onRequestFailed() {
-                System.out.println("Send profile request failed");
-            }
-});
-*/
-            
+            System.out.println("Registration request sent to " + target);
+        }        
     }
-    
-    
+    /*
+    public static void restartApplication(int seconds)
+    {
+        new java.util.Timer().schedule(
+            new java.util.TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        System.out.println("Restarting");
+                        sender.stop();
+                        Thread.sleep(5000);
+                        kaaClient.stop();
+                        Thread.sleep(5000);
+                        KaMU.controller.stop();
+                        Thread.sleep(5000);
+                        KaMU.main(args);
+                        Thread.sleep(5000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }, 
+        seconds);
+    }
+    */
 }

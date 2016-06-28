@@ -5,10 +5,8 @@ import static org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapCh
 
 public class KaMU {
     static boolean conn;
+    static KaaController controller = new KaaController("KaaController");
     public static void main(String[] args) throws InterruptedException {
-
-        KaaController controller = new KaaController("KaaController");
-        
         while (true){
             if (conn) {
                 //Led.ledtoggle(0);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
@@ -26,5 +24,5 @@ public class KaMU {
                 LOG.info("Connection to Kaa server failed: " + e.getMessage());                    
             }          
         }     
-    }   
+    }  
 }

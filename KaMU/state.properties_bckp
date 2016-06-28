@@ -1,5 +1,5 @@
-#Mon Jun 20 09:54:43 EEST 2016
-ENDPOINT_TOKEN=35c3bf10-afff-4322-8ecd-1bd1978ca81b
+#Tue Jun 28 15:06:33 EEST 2016
+ENDPOINT_TOKEN=b363c2d4-f773-40ff-91cc-2e8de5523398
 attached_eps=
 PROFILE_HASH=2jmj7l5rSw0yVb/vlWAYkK/YBwk\=
 topic.list=
@@ -7,5 +7,5 @@ is_registered=true
 need.profile.resync=false
 nf_subscriptions=rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAB3CAAAABAAAAAAeA\=\=
 is_attached=true
-properties.hash=vd1awSBrW2NTW8Id+ELft077mas\=
-event.seq.num=248
+properties.hash=4n7p6EjgbKYzL8srR8fVUqn/zps\=
+event.seq.num=8

@@ -1,5 +1,9 @@
 package kamu;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
 import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
@@ -59,13 +63,38 @@ public class LogSender implements Runnable {
     
     public static void sendLog() throws InterruptedException{
         KaaController.kaaClient.setLogUploadStrategy(new RecordCountLogUploadStrategy(1));
+        CassandraConnector cassandraConn = new CassandraConnector();
             
-        while (KaMU.conn && KaaController.profile != 0){                     
+        while (KaMU.conn && KaaController.profile != 0){         
+            List<String> parameters = new ArrayList<>();
+            Map<String, Double> data = new HashMap<>();
+            
+            switch (KaaController.profile) {
+                case 1:
+                    parameters.add("virtausnopeus");
+                    parameters.add("vedenpinta");
+                    break;
+                case 2:
+                    parameters.add("paine");
+                    parameters.add("lampotila");
+                    break;
+                case 3:
+                    parameters.add("ominaissahkojohtavuus");
+                    parameters.add("virtausnopeus");
+                    parameters.add("vedenpinta");
+                    parameters.add("paine");
+                    parameters.add("lampotila");
+                    break;
+            }
+            
+            data = cassandraConn.getData(parameters, KaaController.deviceID);
+                    
+            
             java.util.Date dt = new java.util.Date();
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String currentTime = sdf.format(dt);
             Random random = new Random();
-            LogData24 log = new LogData24(KaaController.getMac(), 0.1, 0.1, 0.1, 0.1, 0.1);
+            LogData24 log = new LogData24(KaaController.getMac(), data.get("lampotila"), data.get("ominaissahkojohtavuus"), data.get("paine"), data.get("vedenpinta"), data.get("virtausnopeus"));
             KaaController.kaaClient.addLogRecord(log);
 
             //Led.ledtoggle(2500);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
