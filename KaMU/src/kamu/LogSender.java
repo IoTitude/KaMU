@@ -100,7 +100,7 @@ public class LogSender implements Runnable {
             //Led.ledtoggle(2500);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
 
             LOG.info("Log record {} sent", log.toString());
-            sleep(20000);              
+            sleep(2000);              
         }
         KaaController.kaaClient.stop();
     }  

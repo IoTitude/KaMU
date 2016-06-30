@@ -1,5 +1,6 @@
 package kamu;
 
+import java.io.IOException;
 import java.net.NetworkInterface;
 import java.util.List;
 import java.util.logging.Level;
@@ -42,7 +43,7 @@ public class KaaController implements Runnable{
     public void start(){  
         if (thread == null)
         {
-            System.out.println("Version 0.4");
+            System.out.println("Version " + version);
             kaaStart(); 
             System.out.println(getMac());
             System.out.println(kaaClient.getEndpointKeyHash());
@@ -161,13 +162,40 @@ public class KaaController implements Runnable{
 
             @Override
             public void onEvent(UpdateDevice event, String source) {
+                String version = event.getVersion();
                 System.out.println(event.getVersion());
+                int delay = event.getDelay();
+                new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                System.out.println("Update test");
+                                Process proc = Runtime.getRuntime().exec("java -jar /home/h9073/Documents/Repos/literate-guide/TestUpdater/dist/TestUpdater.jar update " + version);
+                            } catch (Exception ex) {
+                                Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }, 
+                delay);
             }
 
             @Override
             public void onEvent(RestartDevice event, String source) {
                 int delay = event.getDelay();
-                System.out.println(delay);
+                new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            try {
+                                System.out.println("Reset test");
+                                Process proc = Runtime.getRuntime().exec("java -jar /home/h9073/Documents/Repos/literate-guide/TestUpdater/dist/TestUpdater.jar restart");
+                            } catch (Exception ex) {
+                                Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }, 
+                delay);
             }
         });
     }
@@ -198,29 +226,4 @@ public class KaaController implements Runnable{
             System.out.println("Registration request sent to " + target);
         }        
     }
-    /*
-    public static void restartApplication(int seconds)
-    {
-        new java.util.Timer().schedule(
-            new java.util.TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        System.out.println("Restarting");
-                        sender.stop();
-                        Thread.sleep(5000);
-                        kaaClient.stop();
-                        Thread.sleep(5000);
-                        KaMU.controller.stop();
-                        Thread.sleep(5000);
-                        KaMU.main(args);
-                        Thread.sleep(5000);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }, 
-        seconds);
-    }
-    */
 }
