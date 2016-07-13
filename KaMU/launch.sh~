@@ -1,12 +1,12 @@
 #!/bin/bash
 
-wget https://github.com/IoTitude/KaMU/archive/0.5.1.tar.gz
-tar -xvzf 0.5.1.tar.gz
-rm 0.5.1.tar.gz
+wget https://github.com/IoTitude/KaMU/archive/0.4.6.tar.gz
+tar -xvzf 0.4.6.tar.gz
+rm 0.4.6.tar.gz
 
 
 
-cd KaMU-0.5.1/KaMU/
+cd KaMU-0.4.6/KaMU/
 mkdir test
 cd src/kamu
 
