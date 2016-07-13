@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Created-By: 1.8.0_91 (Oracle Corporation)
+Class-Path: lib/kaa-java-ep-sdk-oCN2bIAl3IdG13wybyBr
+ BNlQTqs.jar lib/pi4j-core.jar lib/json-20160212.jar lib/cassandra-dri
+ ver-core-3.0.0.jar lib/slf4j-simple-1.7.21.jar lib/guava-16.0.1.jar l
+ ib/netty-common-4.0.33.Final.jar lib/netty-transport-4.0.33.Final.jar
+  lib/metrics-core-3.1.2.jar lib/netty-buffer-4.0.33.Final.jar lib/net
+ ty-codec-4.0.33.Final.jar lib/netty-handler-4.0.33.Final.jar
+Main-Class: kamu.KaMU
