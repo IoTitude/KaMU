@@ -6,7 +6,7 @@ import static org.kaaproject.kaa.client.channel.impl.channels.DefaultBootstrapCh
 public class KaMU {
     static boolean conn;
     static KaaController controller = new KaaController("KaaController");
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         while (true){
             if (conn) {
                 //Led.ledtoggle(0);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED

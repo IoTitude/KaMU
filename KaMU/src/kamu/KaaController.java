@@ -40,7 +40,7 @@ public class KaaController implements Runnable{
         System.out.println("Creating " +  threadName );
     }
     
-    public void start(){  
+    public void start() {  
         if (thread == null)
         {
             System.out.println("Version " + version);
@@ -51,7 +51,7 @@ public class KaaController implements Runnable{
             thread = new Thread (this, threadName);
             thread.start();
             attachUser();
-            
+            System.out.println("Working Directory = " + System.getProperty("user.dir"));
             
             //Led led = new Led(); //////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED  
         }
@@ -171,13 +171,14 @@ public class KaaController implements Runnable{
                         public void run() {
                             try {
                                 System.out.println("Update test");
-                                Process proc = Runtime.getRuntime().exec("java -jar /home/h9073/Documents/Repos/literate-guide/TestUpdater/dist/TestUpdater.jar update " + version);
+                                
+                                Process proc1 = Runtime.getRuntime().exec("java -jar TestUpdater.jar update " + version);
                             } catch (Exception ex) {
                                 Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }, 
-                delay);
+                10000);
             }
 
             @Override
@@ -189,13 +190,13 @@ public class KaaController implements Runnable{
                         public void run() {
                             try {
                                 System.out.println("Reset test");
-                                Process proc = Runtime.getRuntime().exec("java -jar /home/h9073/Documents/Repos/literate-guide/TestUpdater/dist/TestUpdater.jar restart");
+                                Process proc = Runtime.getRuntime().exec("java -jar TestUpdater.jar restart");
                             } catch (Exception ex) {
                                 Logger.getLogger(KaaController.class.getName()).log(Level.SEVERE, null, ex);
                             }
                         }
                     }, 
-                delay);
+                10000);
             }
         });
     }
