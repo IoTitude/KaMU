@@ -1,0 +1,5 @@
+#!/bin/bash
+rm -r *
+tar -xvzf KaMU-*.tar.gz
+rm KaMU-*.tar.gz
+java -jar KaMU.jar 

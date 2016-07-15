@@ -14,15 +14,13 @@ public class CassandraConnector {
     public CassandraConnector() {
     }
     
-    public static Map<String, Double> getData(List<String> parameters, int deviceID){
-        //List<Double> data = new ArrayList<>();   
+    public static Map<String, Double> getData(List<String> parameters, int deviceID){ 
         Map<String, Double> data = new HashMap<>();   
         data.put("ominaissahkojohtavuus", 0.0);
         data.put("virtausnopeus", 0.0);
         data.put("vedenpinta", 0.0);
         data.put("paine", 0.0);
         data.put("lampotila", 0.0);
-        StringBuilder builder = new StringBuilder();
         Cluster cluster;
         Session session;   
         

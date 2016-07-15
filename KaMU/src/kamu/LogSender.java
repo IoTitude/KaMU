@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Level;
 import org.kaaproject.kaa.client.logging.strategies.RecordCountLogUploadStrategy;
 import org.kaaproject.kaa.schema.sample.logging.LogData24;
@@ -92,12 +91,10 @@ public class LogSender implements Runnable {
             
             java.util.Date dt = new java.util.Date();
             java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String currentTime = sdf.format(dt);
-            Random random = new Random();
             LogData24 log = new LogData24(KaaController.getMac(), data.get("lampotila"), data.get("ominaissahkojohtavuus"), data.get("paine"), data.get("vedenpinta"), data.get("virtausnopeus"));
             KaaController.kaaClient.addLogRecord(log);
-
-            //Led.ledtoggle(2500);//////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
+            //UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
+            Led.ledtoggle(2500);
 
             LOG.info("Log record {} sent", log.toString());
             sleep(2000);              

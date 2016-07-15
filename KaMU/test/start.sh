@@ -1,4 +1,6 @@
 #!/bin/bash
-tar -xvzf dist.tar.gz
-rm dist.tar.gz
+rm -r *
+tar -xvzf *.tar.gz
+rm *.tar.gz
+
 java -jar KaMU.jar 

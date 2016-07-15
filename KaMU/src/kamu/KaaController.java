@@ -52,8 +52,6 @@ public class KaaController implements Runnable{
             thread.start();
             attachUser();
             System.out.println("Working Directory = " + System.getProperty("user.dir"));
-            
-            //Led led = new Led(); //////UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED  
         }
         
     }
