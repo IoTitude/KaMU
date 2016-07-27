@@ -31,7 +31,7 @@ public class BaasBoxController {
             String urlParameters = "username=admin&password=admin&appcode=1234567890";
             byte[] postData = urlParameters.getBytes();
             // URL to connect to
-            String urlStr = "http://82.196.14.4:9000/login";
+            String urlStr = "http://192.168.112.60/login";
             // Creating HttpURLConnection
             HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
             // Request method. SetDoOutput must be declared to be able to POST/PUT output (parameters)
@@ -71,7 +71,7 @@ public class BaasBoxController {
     public static JSONObject getDocuments(String session, String collection) {
         try {
             // Get documents from specific collection
-            String urlStr = "http://82.196.14.4:9000/document/" + collection;
+            String urlStr = "http://192.168.112.60/document/" + collection;
             HttpURLConnection conn = (HttpURLConnection) new URL(urlStr).openConnection();
             conn.setRequestMethod("GET");
             conn.setDoOutput(true);

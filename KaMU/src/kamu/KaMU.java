@@ -14,7 +14,7 @@ public class KaMU {
                 controller.start();
             }           
             try{
-                conn = InetAddress.getByName("192.168.142.46").isReachable(1000);
+                conn = InetAddress.getByName("192.168.112.131").isReachable(1000);
             } catch (Exception e){
                 if (KaaController.sender.isAlive()){
                     KaaController.sender.stop();

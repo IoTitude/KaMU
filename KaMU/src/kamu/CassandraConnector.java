@@ -25,8 +25,9 @@ public class CassandraConnector {
         Session session;   
         
         try {
-            cluster = Cluster.builder().addContactPoint("198.211.127.190").withCredentials("admin", "challenge2016").build();
-            session = cluster.connect("mittadata");
+            cluster = Cluster.builder().addContactPoint("192.168.112.70").withCredentials("cassandra", "cassandra").build();
+            //cluster = Cluster.builder().addContactPoint("192.168.112.70").addContactPoint("192.168.112.251").build();
+            session = cluster.connect("measuring_data");
 
             ResultSet results = session.execute("SELECT * FROM simdatagen WHERE id = " + deviceID + " ALLOW FILTERING;");
             for (Row row : results) {  
