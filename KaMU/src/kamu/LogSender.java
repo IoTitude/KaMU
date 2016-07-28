@@ -95,7 +95,7 @@ public class LogSender implements Runnable {
             LogData24 log = new LogData24(KaaController.getMac(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble(), random.nextDouble());
             KaaController.kaaClient.addLogRecord(log);
             //UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
-            //Led.ledtoggle(2500);
+            Led.ledtoggle(2500);
 
             LOG.info("Log record {} sent", log.toString());
             sleep(2000);              
