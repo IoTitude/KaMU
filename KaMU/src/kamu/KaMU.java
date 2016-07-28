@@ -10,7 +10,7 @@ public class KaMU {
         while (true){
             if (conn) {
                 //UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
-                Led.ledtoggle(0);
+                //Led.ledtoggle(0);
                 controller.start();
             }           
             try{
@@ -22,7 +22,7 @@ public class KaMU {
                 }     
                 conn = false;
                 //UNCOMMENT WHEN RUNNING IN RASPBERRY WITH LED INSTALLED
-                Led.ledtoggle(500);
+                //Led.ledtoggle(500);
                 LOG.info("Connection to Kaa server failed: " + e.getMessage());                    
             }          
         }     
